@@ -87,6 +87,9 @@ func handleEventAPIEvent(api *slack.Client, eventApiEvent slackevents.EventsAPIE
 					w.WriteHeader(http.StatusInternalServerError)
 					return
 				}
+				if res == "" {
+					res = "DB が空のようです"
+				}
 				if _, _, err := api.PostMessage(event.Channel, slack.MsgOptionText(res, false)); err != nil {
 					w.WriteHeader(http.StatusInternalServerError)
 					return
