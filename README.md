@@ -1,12 +1,7 @@
-# Slack Bot
+# 会議室予約くん
 
-## Setup
+## 環境
 
-### ngrok
-
-```shell-session
-# Sign up ngrok
-# Download ngrok-linux-package
-$ sudo tar -C ~/.local/bin -xzf ngrok-stable-linux-amd64.tgz
-$ chown USER:GROUP ~/.local/bin/ngrok # if you need
-```
+- Go 1.17
+- slack-go/slack v0.10
+- dgraph-io/badger/v3 v3.2103.2
