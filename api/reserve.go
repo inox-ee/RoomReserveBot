@@ -45,8 +45,9 @@ func FormatViewByRoom(rsvs []Reserve) string {
 		groupRsv[rsv.Room] = append(groupRsv[rsv.Room], fmt.Sprintf("\t`%s` ~ `%s` (by %s)", rsv.StartTime, rsv.EndTime, rsv.User))
 	}
 	var res string
-	for room, rs := range groupRsv {
-		res += fmt.Sprintf("%s :\n%s\n", room, strings.Join(rs, "\n"))
+	for _, room := range rooms {
+		reserve := groupRsv[room.Name]
+		res += fmt.Sprintf("%s[%s] :\n%s\n", room.Name, room.Description, strings.Join(reserve, "\n"))
 	}
 	return res
 }
