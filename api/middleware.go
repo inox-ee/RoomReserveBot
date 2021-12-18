@@ -6,7 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/inox-ee/TestSlack/util"
+	"ventus-inc/Ventus_Office_ReserveBot/util"
+
 	"github.com/slack-go/slack"
 )
 

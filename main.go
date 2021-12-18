@@ -3,9 +3,10 @@ package main
 import (
 	"log"
 
+	"ventus-inc/Ventus_Office_ReserveBot/api"
+	"ventus-inc/Ventus_Office_ReserveBot/util"
+
 	"github.com/dgraph-io/badger/v3"
-	"github.com/inox-ee/TestSlack/api"
-	"github.com/inox-ee/TestSlack/util"
 )
 
 func main() {

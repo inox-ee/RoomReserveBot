@@ -1,4 +1,4 @@
-module github.com/inox-ee/TestSlack
+module ventus-inc/Ventus_Office_ReserveBot
 
 go 1.17
 

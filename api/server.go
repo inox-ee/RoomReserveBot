@@ -8,8 +8,9 @@ import (
 	"net/http"
 	"os"
 
+	"ventus-inc/Ventus_Office_ReserveBot/util"
+
 	"github.com/dgraph-io/badger/v3"
-	"github.com/inox-ee/TestSlack/util"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
 )
