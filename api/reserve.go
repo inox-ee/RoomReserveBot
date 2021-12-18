@@ -28,7 +28,7 @@ func ParseReserveKV(key, val string) Reserve {
 		Room:      k[1],
 		StartTime: v[0],
 		EndTime:   v[1],
-		User:      k[2],
+		User:      v[2],
 	}
 }
 
@@ -42,11 +42,11 @@ func FormatViewByRoom(rsvs []Reserve) string {
 	groupRsv := map[string][]string{}
 	sort.Slice(rsvs, func(i, j int) bool { return rsvs[i].StartTime < rsvs[j].EndTime })
 	for _, rsv := range rsvs {
-		groupRsv[rsv.Room] = append(groupRsv[rsv.Room], fmt.Sprintf("`%s` ~ `%s`", rsv.StartTime, rsv.EndTime))
+		groupRsv[rsv.Room] = append(groupRsv[rsv.Room], fmt.Sprintf("\t`%s` ~ `%s` (by %s)", rsv.StartTime, rsv.EndTime, rsv.User))
 	}
 	var res string
 	for room, rs := range groupRsv {
-		res += fmt.Sprintf("%s : %s\n", room, strings.Join(rs, " | "))
+		res += fmt.Sprintf("%s :\n%s\n", room, strings.Join(rs, "\n"))
 	}
 	return res
 }

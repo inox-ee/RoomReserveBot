@@ -23,11 +23,15 @@ type Room struct {
 var rooms = []Room{
 	{
 		Name:        "Room1",
-		Description: "部屋1",
+		Description: "5F 手前",
 	},
 	{
 		Name:        "Room2",
-		Description: "部屋2",
+		Description: "5F 奥",
+	},
+	{
+		Name:        "Room3",
+		Description: "6F",
 	},
 }
 
@@ -38,7 +42,7 @@ type Server struct {
 }
 
 func NewServer(config util.Config, store *badger.DB) *Server {
-	slackApi := slack.New(config.SlackBotToken, slack.OptionDebug(true), slack.OptionLog(log.New(os.Stdout, "api: ", log.Lshortfile|log.LstdFlags)), slack.OptionAppLevelToken(config.SlackSocketToken))
+	slackApi := slack.New(config.SlackBotToken, slack.OptionLog(log.New(os.Stdout, "api: ", log.Lshortfile|log.LstdFlags)))
 
 	return &Server{
 		config: config,
@@ -56,6 +60,15 @@ func handleError(err error, w http.ResponseWriter, status int) {
 }
 
 func (srv *Server) Start(addr string) error {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		if _, err := w.Write([]byte("alive")); err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	})
+
 	http.HandleFunc("/slack/events", slackVerificationMiddleware(srv.config, func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
 		handleError(err, w, http.StatusInternalServerError)
@@ -76,7 +89,39 @@ func (srv *Server) Start(addr string) error {
 		srv.handleActionPayload(payload, w)
 	}))
 
-	log.Println("[INFO] \x1b[33m⚡\x1b[0mServer listening")
+	http.HandleFunc("/slack/events-verify", func(w http.ResponseWriter, r *http.Request) {
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		eventsAPIEvent, err := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionNoVerifyToken())
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		switch eventsAPIEvent.Type {
+		case slackevents.URLVerification:
+			var res *slackevents.ChallengeResponse
+			if err := json.Unmarshal(body, &res); err != nil {
+				log.Println(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "text/plain")
+			if _, err := w.Write([]byte(res.Challenge)); err != nil {
+				log.Println(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+		}
+	})
+
+	log.Println("[INFO] \x1b[33m⚡\x1b[0mServer listening:", addr)
 	err := http.ListenAndServe(fmt.Sprintf(":%s", addr), nil)
 	return err
 }

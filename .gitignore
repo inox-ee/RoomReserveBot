@@ -4,6 +4,7 @@
 
 ### General ###
 *.env
+*.zip
 
 ### Go ###
 # Binaries for programs and plugins

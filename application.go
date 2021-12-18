@@ -22,5 +22,5 @@ func main() {
 	defer db.Close()
 
 	server := api.NewServer(config, db)
-	server.Start("8080")
+	server.Start("5000")
 }
